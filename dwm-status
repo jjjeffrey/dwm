@@ -199,7 +199,7 @@ get_down() {
   local _down
   local totaldown=0
   local network
-  for network in /sys/class/net/{eth,wlan,enp0s,wlp2s0}*/statistics/rx_bytes; do
+  for network in /sys/class/net/{eth,wlan,enp0s,wlp}*/statistics/rx_bytes; do
     test ! -e "$network" && continue
     read network < $network
     totaldown=$((totaldown + network))
@@ -222,7 +222,7 @@ get_up() {
   local _up
   local totalup=0
   local network
-  for network in /sys/class/net/{eth,wlan,enp0s,wlp2s0}*/statistics/tx_bytes; do
+  for network in /sys/class/net/{eth,wlan,enp0s,wlp}*/statistics/tx_bytes; do
     test ! -e "$network" && continue
     read network < $network
     totalup=$((totalup + network))
@@ -600,6 +600,26 @@ get__battery() {
 }
 
 #
+# Time Left on Battery Power
+#
+
+time_left=
+get_time_left() {
+  local _time_left=
+  local energy_now=$(cat /sys/class/power_supply/BAT0/energy_now 2> /dev/null)
+  local power_now=$(cat /sys/class/power_supply/BAT0/power_now 2> /dev/null)
+  if [[ $power_now = 0 ]]; then
+    _time_left="zero power"
+  else
+    local hours_left=$((energy_now / power_now))
+    local mins_left=$(printf "%.0f" $(awk "BEGIN {print $energy_now / $power_now % 1 * 60}" 2> /dev/null))
+    _time_left="${hours_left}h ${mins_left}m left"
+  fi
+  ret=$_time_left
+  time_left=$_time_left
+}
+
+#
 # Music - MOCP
 #
 
@@ -668,6 +688,18 @@ touchpad=
 get_touchpad() {
   touchpad=$(synclient -l | grep -q 'TouchpadOff.*=.*0' && echo 'T' || echo 'N')
   ret=$touchpad
+}
+
+#
+# Backlight
+#
+
+backlight=
+get_backlight() {
+  _backlight=$(xbacklight -get)
+  _backlight=${_backlight%.*}
+  backlight=$_backlight
+  ret=$_backlight
 }
 
 #
@@ -759,9 +791,11 @@ main() {
     get_down
     get_up
     get_ssid
+    get_backlight
     get_vol Master
     get_vol Capture mute && cap_mute=$ret
     get_battery
+    get_time_left
     get_time
 
     # timer $((8 * 60 * 60)) get_ip
@@ -790,12 +824,16 @@ main() {
       echo -n "${up}u"
       echo -n ' • '
       echo -n "${ssid}"
-      # echo -n ' • '
+      echo -n ' • '
       # echo -n "${ip}"
+      # echo -n ' • '
+      echo -n "${backlight}%☼"
       echo -n ' • '
       echo -n "${vol}${cap_mute}"
       echo -n ' • '
       echo -n "${battery}"
+      echo -n ' • '
+      echo -n "${time_left}"
       echo -n ' • '
       echo -n "${weather}"
       echo -n ' • '
