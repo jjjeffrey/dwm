@@ -2,9 +2,9 @@
 
 /* appearance */
 static const char *fonts[] = {
-	"terminus:size=8"
+	"terminus:size=8:antialias=0"
 };
-static const char dmenufont[]       = "terminus:size=8";
+static const char dmenufont[]       = "terminus:size=8:antialias=0";
 static const char normbordercolor[] = "#444444";
 static const char normbgcolor[]     = "#222222";
 static const char normfgcolor[]     = "#bbbbbb";
@@ -105,7 +105,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_a,      spawn,          {.v = touchcmd } },
 	{ MODKEY,                       XK_comma,  spawn,          {.v = voldowncmd } },
 	{ MODKEY,                       XK_period, spawn,          {.v = volupcmd } },
-	{ MODKEY,                       XK_v,      spawn,          {.v = voltogglecmd } },
+	{ MODKEY,                       XK_slash,  spawn,          {.v = voltogglecmd } },
 	{ MODKEY,                       XK_minus,  spawn,          {.v = lightdowncmd } },
 	{ MODKEY,                       XK_equal,  spawn,          {.v = lightupcmd } },
 };
