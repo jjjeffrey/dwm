@@ -57,7 +57,13 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "urxvt", NULL };
 
-static const char *touchcmd[] = { "sh", "-c", "synclient TouchpadOff=$(synclient -l | grep -c 'TouchpadOff.*=.*0') && xdotool mousemove 32767 32767", NULL };
+/* custom commands */
+static const char *touchcmd[]     = { "sh", "-c", "synclient TouchpadOff=$(synclient -l | grep -c 'TouchpadOff.*=.*0') && xdotool mousemove 32767 32767", NULL };
+static const char *voldowncmd[]   = { "amixer", "-q", "set", "Master", "5%-", "unmute", NULL };
+static const char *volupcmd[]     = { "amixer", "-q", "set", "Master", "5%+", "unmute", NULL };
+static const char *voltogglecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
+static const char *lightdowncmd[] = { "xbacklight", "-dec", "10", NULL };
+static const char *lightupcmd[]   = { "xbacklight", "-inc", "10", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -95,7 +101,13 @@ static Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
+	/* custom keys */
 	{ MODKEY,                       XK_a,      spawn,          {.v = touchcmd } },
+	{ MODKEY,                       XK_comma,  spawn,          {.v = voldowncmd } },
+	{ MODKEY,                       XK_period, spawn,          {.v = volupcmd } },
+	{ MODKEY,                       XK_v,      spawn,          {.v = voltogglecmd } },
+	{ MODKEY,                       XK_minus,  spawn,          {.v = lightdowncmd } },
+	{ MODKEY,                       XK_equal,  spawn,          {.v = lightupcmd } },
 };
 
 /* button definitions */
