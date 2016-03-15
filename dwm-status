@@ -199,7 +199,7 @@ get_down() {
   local _down
   local totaldown=0
   local network
-  for network in /sys/class/net/{eth,wlan,enp0s,wlp}*/statistics/rx_bytes; do
+  for network in /sys/class/net/{eth,wlan,enp,wlp}*/statistics/rx_bytes; do
     test ! -e "$network" && continue
     read network < $network
     totaldown=$((totaldown + network))
@@ -222,7 +222,7 @@ get_up() {
   local _up
   local totalup=0
   local network
-  for network in /sys/class/net/{eth,wlan,enp0s,wlp}*/statistics/tx_bytes; do
+  for network in /sys/class/net/{eth,wlan,enp,wlp}*/statistics/tx_bytes; do
     test ! -e "$network" && continue
     read network < $network
     totalup=$((totalup + network))
@@ -791,7 +791,7 @@ main() {
     get_down
     get_up
     get_ssid
-    get_backlight
+    # get_backlight
     get_vol Master
     get_vol Capture mute && cap_mute=$ret
     get_battery
@@ -824,10 +824,10 @@ main() {
       echo -n "${up}u"
       echo -n ' • '
       echo -n "${ssid}"
-      echo -n ' • '
+      # echo -n ' • '
       # echo -n "${ip}"
       # echo -n ' • '
-      echo -n "${backlight}%☼"
+      # echo -n "${backlight}%☼"
       echo -n ' • '
       echo -n "${vol}${cap_mute}"
       echo -n ' • '
