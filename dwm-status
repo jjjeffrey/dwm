@@ -246,7 +246,8 @@ get_ssid() {
   elif ps aux | grep -v grep | grep -q wicd-daemon; then
     _ssid=$(_get_ssid_wicd)
   else
-    _ssid='Not Connected'
+    # _ssid='Not Connected'
+    _ssid=$(_get_ssid_netctl)
   fi
   test -z "$(echo "$_ssid" | tr -d ' \r\n\t')" && _ssid='Not Connected'
   ret=$_ssid
@@ -281,6 +282,10 @@ _get_ssid_wicd() {
     return 1
   fi
   echo "$data" | grep '^Essid:' | awk '{ print $2 }'
+}
+
+_get_ssid_netctl() {
+  netctl list | grep '*' | cut -c 3- || echo 'Not Connected'
 }
 
 #
@@ -606,13 +611,18 @@ get__battery() {
 time_left=
 get_time_left() {
   local _time_left=
+  local status=$(cat /sys/class/power_supply/BAT0/status 2> /dev/null)
   local energy_now=$(cat /sys/class/power_supply/BAT0/energy_now 2> /dev/null)
   local power_now=$(cat /sys/class/power_supply/BAT0/power_now 2> /dev/null)
-  if [[ $power_now = 0 ]]; then
-    _time_left="zero power"
+  if [[ $status = Charging ]]; then
+    _time_left='Charging'
+  elif [[ $power_now = 0 ]]; then
+    _time_left='Fully Charged'
   else
     local hours_left=$((energy_now / power_now))
-    local mins_left=$(printf "%.0f" $(awk "BEGIN {print $energy_now / $power_now % 1 * 60}" 2> /dev/null))
+    local mins_left=$(awk "BEGIN {print $energy_now / $power_now % 1 * 60}" 2> /dev/null)
+    mins_left=${mins_left%.*}
+    # local mins_left=$(printf '%.0f' $(awk "BEGIN {print $energy_now / $power_now % 1 * 60}" 2> /dev/null))
     _time_left="${hours_left}h ${mins_left}m left"
   fi
   ret=$_time_left
