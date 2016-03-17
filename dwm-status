@@ -616,7 +616,7 @@ get_time_left() {
   local power_now=$(cat /sys/class/power_supply/BAT0/power_now 2> /dev/null)
   if [[ $status = Charging ]]; then
     _time_left='Charging'
-  elif [[ $power_now = 0 ]]; then
+  elif [[ $power_now -eq 0 ]]; then
     _time_left='Fully Charged'
   else
     local hours_left=$((energy_now / power_now))
