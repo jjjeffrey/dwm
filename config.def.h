@@ -64,6 +64,7 @@ static const char *volupcmd[]     = { "amixer", "-q", "set", "Master", "5%+", "u
 static const char *voltogglecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
 static const char *lightdowncmd[] = { "xbacklight", "-dec", "10", NULL };
 static const char *lightupcmd[]   = { "xbacklight", "-inc", "10", NULL };
+static const char *scrotwincmd[]  = { "scrot", "-u", "-e", "mv $f ~/screenshots", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -108,6 +109,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_slash,  spawn,          {.v = voltogglecmd } },
 	{ MODKEY,                       XK_minus,  spawn,          {.v = lightdowncmd } },
 	{ MODKEY,                       XK_equal,  spawn,          {.v = lightupcmd } },
+	{ MODKEY,                       XK_u,      spawn,          {.v = scrotwincmd } },
 };
 
 /* button definitions */
