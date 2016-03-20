@@ -706,6 +706,13 @@ get_touchpad() {
 
 backlight=
 get_backlight() {
+  local max_brightness=$(cat /sys/class/backlight/intel_backlight/max_brightness 2> /dev/null)
+  local brightness=$(cat /sys/class/backlight/intel_backlight/brightness 2> /dev/null)
+  backlight=$((brightness * 100 / max_brightness))
+  ret=$backlight
+}
+
+get__backlight() {
   _backlight=$(xbacklight -get)
   _backlight=${_backlight%.*}
   backlight=$_backlight
@@ -801,7 +808,7 @@ main() {
     get_down
     get_up
     get_ssid
-    # get_backlight
+    get_backlight
     get_vol Master
     get_vol Capture mute && cap_mute=$ret
     get_battery
@@ -836,8 +843,8 @@ main() {
       echo -n "${ssid}"
       # echo -n ' • '
       # echo -n "${ip}"
-      # echo -n ' • '
-      # echo -n "${backlight}%☼"
+      echo -n ' • '
+      echo -n "${backlight}%☼"
       echo -n ' • '
       echo -n "${vol}${cap_mute}"
       echo -n ' • '
