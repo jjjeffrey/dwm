@@ -1,5 +1,9 @@
 /* See LICENSE file for copyright and license details. */
 
+/* patches */
+#include "moveresize.c"
+#include "movestack.c"
+
 /* appearance */
 static const char *fonts[] = {
 	"terminus:size=8:antialias=0"
@@ -98,6 +102,18 @@ static Key keys[] = {
 
 	/* custom keys */
 	{ MODKEY,                       XK_a,      spawn,          {.v = touchcmd } },
+	{ MODKEY,                       XK_Down,   moveresize,     {.v = (int []){ 0, 50, 0, 0 }}},
+	{ MODKEY,                       XK_Up,     moveresize,     {.v = (int []){ 0, -50, 0, 0 }}},
+	{ MODKEY,                       XK_Right,  moveresize,     {.v = (int []){ 50, 0, 0, 0 }}},
+	{ MODKEY,                       XK_Left,   moveresize,     {.v = (int []){ -50, 0, 0, 0 }}},
+	{ MODKEY|ShiftMask,             XK_Down,   moveresize,     {.v = (int []){ 0, 0, 0, 50 }}},
+	{ MODKEY|ShiftMask,             XK_Up,     moveresize,     {.v = (int []){ 0, 0, 0, -50 }}},
+	{ MODKEY|ShiftMask,             XK_Right,  moveresize,     {.v = (int []){ 0, 0, 50, 0 }}},
+	{ MODKEY|ShiftMask,             XK_Left,   moveresize,     {.v = (int []){ 0, 0, -50, 0 }}},
+	{ MODKEY|ControlMask,           XK_Up,     moveresize,     {.v = (int []){ 0, 0, 50, 50 }}},
+	{ MODKEY|ControlMask,           XK_Down,   moveresize,     {.v = (int []){ 0, 0, -50, -50 }}},
+	{ MODKEY|ShiftMask,             XK_j,      movestack,      {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_k,      movestack,      {.i = -1 } },
 };
 
 /* button definitions */
