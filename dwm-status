@@ -36,7 +36,7 @@ get_cpu() {
 temp=
 get_temp() {
   local _temp
-  _temp=$(cat /sys/class/hwmon/hwmon2/temp2_input 2> /dev/null)
+  _temp=$(cat /sys/class/hwmon/hwmon2/temp?_input 2> /dev/null)
   _temp=$((_temp / 1000))
   temp=$_temp
 }
