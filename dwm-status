@@ -19,7 +19,7 @@ get_cpu() {
   read _cpu a b c idle rest < /proc/stat
   local total=$((a + b + c + idle))
   local intervaltotal=$((total - prevtotal))
-  test $prevtotal -ne 0 \
+  [[ $prevtotal -ne 0 ]] \
     && _cpu=$((100 * (intervaltotal - (idle - previdle)) / intervaltotal)) \
     || _cpu=0
   prevtotal=$total
@@ -72,10 +72,7 @@ get_mem() {
 swap=
 swap_max=$(free -b | grep Swap: | awk '{ print $2 }')
 get_swap() {
-  if [[ $swap_max -eq 0 ]]; then
-    swap=0
-    return
-  fi
+  [[ $swap_max -eq 0 ]] && swap=0 && return
   local nums=$(free -b | grep Swap:)
   local cur=$(awk '{ print $3 }' <<< "$nums")
   local _swap=$((cur * 100 / swap_max))
@@ -112,11 +109,9 @@ oldtotaldown=0
 get_down() {
   local _down
   local totaldown=$(cat /sys/class/net/wlp*/statistics/rx_bytes 2> /dev/null)
-  if [[ $oldtotaldown -ne 0 ]]; then
-    _down=$(((totaldown - oldtotaldown) / 1024))
-  else
-    _down=0
-  fi
+  [[ $oldtotaldown -ne 0 ]] \
+    && _down=$(((totaldown - oldtotaldown) / 1024)) \
+    || _down=0
   oldtotaldown=$totaldown
   down=$_down
 }
@@ -131,11 +126,9 @@ oldtotalup=0
 get_up() {
   local _up
   local totalup=$(cat /sys/class/net/wlp*/statistics/tx_bytes 2> /dev/null)
-  if [[ $oldtotalup -ne 0 ]]; then
-    _up=$(((totalup - oldtotalup) / 1024))
-  else
-    _up=0
-  fi
+  [[ $oldtotalup -ne 0 ]] \
+    && _up=$(((totalup - oldtotalup) / 1024)) \
+    || _up=0
   oldtotalup=$totalup
   up=$_up
 }
@@ -147,9 +140,7 @@ get_up() {
 ssid=
 get_ssid() {
   _ssid=$(nmcli -f name c show --active | sed -n 's/ *$//; 2p')
-  if [[ -z $_ssid ]]; then
-    _ssid='Not Connected'
-  fi
+  [[ -z $_ssid ]] && _ssid='Not Connected'
   ssid=$_ssid
 }
 
@@ -173,13 +164,9 @@ get_vol() {
   local _vol=$(grep -m 1 -o '[0-9]\+%' <<< "$data")
   local mute=$(grep -m 1 -o '\[off\]' <<< "$data")
   local state
-
-  if test -z "$mute"; then
-    state='♫'
-  else
-    state='M'
-  fi
-
+  [[ -z $mute ]] \
+    && state='♫' \
+    || state='M'
   _vol="${_vol}${state}"
   vol=$_vol
 }
@@ -198,9 +185,8 @@ get_battery() {
   local _battery=0
   local battery_n=$(cat /sys/class/power_supply/BAT0/energy_now 2> /dev/null \
     || cat /sys/class/power_supply/BAT0/charge_now 2> /dev/null)
-  if test -n "$battery_n"; then
-    _battery=$((battery_n * 100 / battery_f))
-  fi
+  [[ -n $battery_n ]] \
+    && _battery=$((battery_n * 100 / battery_f))
   local status=$(cat /sys/class/power_supply/BAT0/status 2> /dev/null \
     || echo 'Unknown')
   case "$status" in
