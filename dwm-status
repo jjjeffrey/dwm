@@ -159,7 +159,7 @@ get_ssid() {
 
 time=
 get_time() {
-  local _time=$(date '+%a, %b %e - %l:%M%P' | sed 's/  / /')
+  local _time=$(date '+%a, %b %e - %l:%M%P' | sed 's/  / /g')
   time=$_time
 }
 
