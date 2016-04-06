@@ -111,7 +111,7 @@ down=
 oldtotaldown=0
 get_down() {
   local _down
-  local totaldown=$(cat /sys/class/net/wlp?s0/statistics/rx_bytes 2> /dev/null)
+  local totaldown=$(cat /sys/class/net/wlp*/statistics/rx_bytes 2> /dev/null)
   if [[ $oldtotaldown -ne 0 ]]; then
     _down=$(((totaldown - oldtotaldown) / 1024))
   else
@@ -130,7 +130,7 @@ up=
 oldtotalup=0
 get_up() {
   local _up
-  local totalup=$(cat /sys/class/net/wlp?s0/statistics/tx_bytes 2> /dev/null)
+  local totalup=$(cat /sys/class/net/wlp*/statistics/tx_bytes 2> /dev/null)
   if [[ $oldtotalup -ne 0 ]]; then
     _up=$(((totalup - oldtotalup) / 1024))
   else
