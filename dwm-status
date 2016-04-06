@@ -146,11 +146,7 @@ get_up() {
 
 ssid=
 get_ssid() {
-  #_ssid=$(nmcli -f name c show --active | tail -n 1)
-  #if [[ $_ssid = 'NAME' ]]; then
-  #  _ssid='Not Connected'
-  #fi
-  _ssid=$(nmcli -f name c show --active | sed -n 's/ //; 2p')
+  _ssid=$(nmcli -f name c show --active | sed -n 's/ *$//; 2p')
   if [[ -z $_ssid ]]; then
     _ssid='Not Connected'
   fi
@@ -163,7 +159,6 @@ get_ssid() {
 
 time=
 get_time() {
-#  local _time=$(date '+%a, %b %e - %l:%M%P')
   local _time=$(date '+%a, %b %e - %l:%M%P' | sed 's/  / /')
   time=$_time
 }
