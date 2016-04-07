@@ -35,8 +35,14 @@ get_cpu() {
 
 temp=
 get_temp() {
-  local _temp
-  _temp=$(cat /sys/class/hwmon/hwmon2/temp?_input 2> /dev/null)
+  local _temp=0
+  for dir in /sys/class/hwmon/hwmon?; do
+    name=$(cat "$dir/name")
+    [[ $name = 'coretemp' ]] \
+      && temps=($dir/temp?_input) \
+      && _temp=$(cat "${temps[0]}") \
+      && break
+  done
   _temp=$((_temp / 1000))
   temp=$_temp
 }
