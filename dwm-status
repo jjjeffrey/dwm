@@ -35,7 +35,7 @@ get_cpu() {
 
 temp=
 temp_file=$(for dir in /sys/class/hwmon/hwmon?; do
-              name=$(cat "$dir/name")
+              name=$(cat "$dir/name" 2> /dev/null)
               [[ $name = 'coretemp' ]] \
                 && temps=($dir/temp?_input) \
                 && echo "${temps[0]}" \
@@ -145,7 +145,11 @@ get_up() {
 
 ssid=
 get_ssid() {
-  _ssid=$(nmcli -f name c show --active | sed -n 's/ *$//; 2p')
+  if [[ -n $(pidof NetworkManager) ]]; then
+    _ssid=$(nmcli -f name c show --active | sed -n 's/ *$//; 2p')
+  else
+    _ssid=$(netctl list | grep '*' | cut -c 3-)
+  fi
   [[ -z $_ssid ]] && _ssid='Not Connected'
   ssid=$_ssid
 }
